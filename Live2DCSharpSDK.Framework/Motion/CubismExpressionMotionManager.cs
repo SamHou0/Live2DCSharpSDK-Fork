@@ -2,6 +2,7 @@
 using Live2DCSharpSDK.Framework.Model;
 
 namespace Live2DCSharpSDK.Framework.Motion;
+#pragma warning disable CS0618 // 类型或成员已过时
 
 /// <summary>
 /// パラメータに適用する表情の値を持たせる構造体

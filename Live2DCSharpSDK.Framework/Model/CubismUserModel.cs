@@ -39,72 +39,72 @@ public abstract class CubismUserModel : IDisposable
     /// <summary>
     /// Mocデータ
     /// </summary>
-    protected CubismMoc _moc;
+    public CubismMoc _moc;
 
     /// <summary>
     /// モーション管理
     /// </summary>
-    protected CubismMotionManager _motionManager;
+    public CubismMotionManager _motionManager;
     /// <summary>
     /// 表情管理
     /// </summary>
-    protected CubismExpressionMotionManager _expressionManager;
+    public CubismExpressionMotionManager _expressionManager;
     /// <summary>
     /// 自動まばたき
     /// </summary>
-    protected CubismEyeBlink? _eyeBlink;
+    public CubismEyeBlink? _eyeBlink;
     /// <summary>
     /// 呼吸
     /// </summary>
-    protected CubismBreath _breath;
+    public CubismBreath _breath;
     /// <summary>
     /// ポーズ管理
     /// </summary>
-    protected CubismPose? _pose;
+    public CubismPose? _pose;
     /// <summary>
     /// マウスドラッグ
     /// </summary>
-    protected CubismTargetPoint _dragManager;
+    public CubismTargetPoint _dragManager;
     /// <summary>
     /// 物理演算
     /// </summary>
-    protected CubismPhysics? _physics;
+    public CubismPhysics? _physics;
     /// <summary>
     /// ユーザデータ
     /// </summary>
-    protected CubismModelUserData? _modelUserData;
+    public CubismModelUserData? _modelUserData;
     /// <summary>
     /// リップシンクするかどうか
     /// </summary>
-    protected bool _lipSync;
+    public bool _lipSync;
     /// <summary>
     /// 最後のリップシンクの制御値
     /// </summary>
-    protected float _lastLipSyncValue;
+    public float _lastLipSyncValue;
     /// <summary>
     /// マウスドラッグのX位置
     /// </summary>
-    protected float _dragX;
+    public float _dragX;
     /// <summary>
     /// マウスドラッグのY位置
     /// </summary>
-    protected float _dragY;
+    public float _dragY;
     /// <summary>
     /// X軸方向の加速度
     /// </summary>
-    protected float _accelerationX;
+    public float _accelerationX;
     /// <summary>
     /// Y軸方向の加速度
     /// </summary>
-    protected float _accelerationY;
+    public float _accelerationY;
     /// <summary>
     /// Z軸方向の加速度
     /// </summary>
-    protected float _accelerationZ;
+    public float _accelerationZ;
     /// <summary>
     /// MOC3整合性検証するかどうか
     /// </summary>
-    protected bool _mocConsistency;
+    public bool _mocConsistency;
 
     /// <summary>
     /// CubismMotionQueueManagerにイベント用に登録するためのCallback。

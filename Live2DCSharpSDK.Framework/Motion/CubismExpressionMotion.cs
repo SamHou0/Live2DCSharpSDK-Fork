@@ -2,6 +2,7 @@
 using System.Text.Json.Nodes;
 
 namespace Live2DCSharpSDK.Framework.Motion;
+#pragma warning disable CS0618 // 类型或成员已过时
 
 /// <summary>
 /// 表情のモーションクラス。

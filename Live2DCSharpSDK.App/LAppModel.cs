@@ -21,19 +21,19 @@ public class LAppModel : CubismUserModel
     /// <summary>
     /// モデルに設定されたまばたき機能用パラメータID
     /// </summary>
-    private readonly List<string> _eyeBlinkIds = [];
+    public readonly List<string> _eyeBlinkIds = [];
     /// <summary>
     /// モデルに設定されたリップシンク機能用パラメータID
     /// </summary>
-    private readonly List<string> _lipSyncIds = [];
+    public readonly List<string> _lipSyncIds = [];
     /// <summary>
     /// 読み込まれているモーションのリスト
     /// </summary>
-    private readonly Dictionary<string, ACubismMotion> _motions = [];
+    public readonly Dictionary<string, ACubismMotion> _motions = [];
     /// <summary>
     /// 読み込まれている表情のリスト
     /// </summary>
-    private readonly Dictionary<string, ACubismMotion> _expressions = [];
+    public readonly Dictionary<string, ACubismMotion> _expressions = [];
 
     public List<string> Motions => new(_motions.Keys);
     public List<string> Expressions => new(_expressions.Keys);
