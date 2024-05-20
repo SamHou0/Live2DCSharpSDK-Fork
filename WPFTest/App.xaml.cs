@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace Live2DCSharpSDK.WPF
+namespace WPFTest
 {
     /// <summary>
     /// Interaction logic for App.xaml

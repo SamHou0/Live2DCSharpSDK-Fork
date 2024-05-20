@@ -14,6 +14,7 @@ using Live2DCSharpSDK.Framework;
 using static Live2DCSharpSDK.Framework.ModelSettingObj.FileReference;
 using System.Windows.Controls;
 using System.Xml.Linq;
+using OpenTK.Windowing.Common;
 
 namespace Live2DCSharpSDK.WPF
 {
@@ -58,7 +59,9 @@ namespace Live2DCSharpSDK.WPF
             var settings = new GLWpfControlSettings
             {
                 MajorVersion = 3,
-                MinorVersion = 3
+                MinorVersion = 2,
+                GraphicsProfile = ContextProfile.Compatability,
+                TransparentBackground = true
             };
             GLControl.Start(settings);
             LAPP = new(new OpenTKWPFApi(GLControl), Console.WriteLine)
@@ -73,6 +76,10 @@ namespace Live2DCSharpSDK.WPF
         /// </summary>
         public void Start()
         {
+            if (IsPlaying)
+            {
+                return;
+            }
             IsPlaying = true;
             GLControl.Render += GLControl_Render;
         }
@@ -81,13 +88,17 @@ namespace Live2DCSharpSDK.WPF
         /// </summary>
         public void Stop()
         {
+            if (!IsPlaying)
+            {
+                return;
+            }
             IsPlaying = false;
             GLControl.Render -= GLControl_Render;
         }
         private void GLControl_Render(TimeSpan obj)
         {
-            GL.ClearColor(Color4.Blue);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            //GL.ClearColor(Color4.Transparent);
+            //GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             LAPP.Run((float)obj.TotalSeconds);
         }
         private void GLControl_Resized(object sender, SizeChangedEventArgs e)
@@ -97,59 +108,34 @@ namespace Live2DCSharpSDK.WPF
             LAPP.Resize();
             GL.Viewport(0, 0, (int)GLControl.ActualWidth, (int)GLControl.ActualHeight);
         }
+
+        Dictionary<string, CubismMotion> motions = new();
         /// <summary>
         /// 播放动作文件
         /// </summary>
         /// <param name="MotionPath">动画文件地址(motion3.json)</param>
-        /// <param name="priority">优先级</param>
         /// <param name="onFinishedMotionHandler">回调</param>
         /// <returns></returns>
-        public CubismMotionQueueEntry? StartMotion(string MotionPath, MotionPriority priority = MotionPriority.PriorityNormal, string MothionName = "", FinishedMotionCallback? onFinishedMotionHandler = null)
+        public CubismMotionQueueEntry? StartMotion(string MotionPath = "", FinishedMotionCallback? onFinishedMotionHandler = null)
         {
-            if (priority == MotionPriority.PriorityForce)
-            {
-                LModel._motionManager.ReservePriority = priority;
-            }
-            else if (!File.Exists(MotionPath))
+            if (!File.Exists(MotionPath))
             {
                 return null;
             }
-            //判断优先级是否允许播放
-            else if (!LModel._motionManager.ReserveMotion(priority))
-            {
-                CubismLog.Debug("[Live2D]can't start motion.");
-                return null;
-            }
-            if (string.IsNullOrEmpty(MothionName))
-            {
-                MothionName = Path.GetFileNameWithoutExtension(MotionPath);
-            }
-
             CubismMotion motion;
-            if (!LModel._motions.TryGetValue(MothionName, out var value))
+            if (!motions.TryGetValue(MotionPath, out var value))
             {
-                motion = new CubismMotion(MotionPath, onFinishedMotionHandler);
-                //float fadeTime = item.FadeInTime;
-                //if (fadeTime >= 0.0f)
-                //{
-                //    motion.FadeInSeconds = fadeTime;
-                //}
-
-                //fadeTime = item.FadeOutTime;
-                //if (fadeTime >= 0.0f)
-                //{
-                //    motion.FadeOutSeconds = fadeTime;
-                //}
+                motion = new CubismMotion(MotionPath, onFinishedMotionHandler);               
                 motion.SetEffectIds(LModel._eyeBlinkIds, LModel._lipSyncIds);
+                motions.Add(MotionPath, motion);
             }
             else
             {
-                motion = (value as CubismMotion)!;
+                motion = value;
                 motion.OnFinishedMotion = onFinishedMotionHandler;
             }
-
-            CubismLog.Debug($"[Live2D]start motion: [{MotionPath}]");
-            return LModel._motionManager.StartMotionPriority(motion, priority);
+            Start();
+            return LModel._motionManager.StartMotionPriority(motion, MotionPriority.PriorityForce);
         }
 
     }
