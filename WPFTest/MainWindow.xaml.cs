@@ -32,11 +32,15 @@ namespace WPFTest
         }
         private void workloop()
         {
-            var ind = l2dwpf.StartMotion(@"F:\Downloads\七彩虹\走路1.motion3.json", onFinishedMotionHandler: (x, y) =>
-              {
-                  ticklab.Content = DateTime.Now.ToString() + " workloop";
-                  workloop();
-              });
+            var ind = l2dwpf.StartMotion(@"F:\Downloads\七彩虹\走路1.motion3.json");
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    Console.WriteLine(ind.Finished);
+                    Thread.Sleep(200);
+                }
+            });
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -54,7 +58,19 @@ namespace WPFTest
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            l2dwpf.LModel.LoadBreath();
+            
+        }
+
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            var mp = e.GetPosition(BorderOpenTK);
+            l2dwpf.LModel.SetDragging((float)(mp.X / BorderOpenTK.ActualWidth * 2 - 1),
+                -(float)(mp.Y / BorderOpenTK.ActualHeight * 2 - 0.5));
+        }
+
+        private void SX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            //l2dwpf.LModel.SetDragging((float)(SX.Value), (float)(SY.Value));
         }
     }
 }

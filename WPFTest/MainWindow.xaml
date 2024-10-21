@@ -6,7 +6,7 @@
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="-1" />
     </WindowChrome.WindowChrome>
-    <Grid>
+    <Grid MouseMove="Grid_MouseMove">
         <Border x:Name="BorderOpenTK">
         </Border>
         <WrapPanel VerticalAlignment="Bottom">
@@ -14,6 +14,8 @@
             <Button Content="idel" Click="Button_Click_1" />
             <Button Content="idel" Click="Button_Click_2" />
             <Label Name="ticklab" />
+            <Slider x:Name="SX" Minimum="-2" Maximum="2" Width="200" ValueChanged="SX_ValueChanged" />
+            <Slider x:Name="SY" Minimum="-2" Maximum="2" Width="200" ValueChanged="SX_ValueChanged"/>
         </WrapPanel>
     </Grid>
 </Window>
