@@ -9,7 +9,7 @@ namespace Live2DCSharpSDK.App;
 /// <remarks>
 /// コンストラクタ
 /// </remarks>
-public class LAppView(LAppDelegate lapp)
+public abstract class LAppView(LAppDelegate lapp)
 {
     /// <summary>
     /// タッチマネージャー
@@ -24,13 +24,16 @@ public class LAppView(LAppDelegate lapp)
     /// </summary>
     private readonly CubismViewMatrix _viewMatrix = new();
 
+    public abstract void RenderPre();
+    public abstract void RenderPost();
+
     /// <summary>
     /// 初期化する。
     /// </summary>
     public void Initialize()
     {
-        lapp.GL.GetWindowSize(out int width, out int height);
-
+        int width = lapp.WindowWidth;
+        int height = lapp.WindowHeight;
         if (width == 0 || height == 0)
         {
             return;
@@ -75,13 +78,17 @@ public class LAppView(LAppDelegate lapp)
     /// <summary>
     /// 描画する。
     /// </summary>
-    public void Render()
+    internal void Render()
     {
-        var Live2DManager = lapp.Live2dManager;
-        Live2DManager.ViewMatrix.SetMatrix(_viewMatrix);
+        RenderPre();
+
+        var manager = lapp.Live2dManager;
+        manager.ViewMatrix.SetMatrix(_viewMatrix);
 
         // Cubism更新・描画
-        Live2DManager.OnUpdate();
+        manager.OnUpdate();
+
+        RenderPost();
     }
 
     /// <summary>
@@ -92,7 +99,7 @@ public class LAppView(LAppDelegate lapp)
     public void OnTouchesBegan(float pointX, float pointY)
     {
         _touchManager.TouchesBegan(pointX, pointY);
-        CubismLog.Debug($"[Live2D]touchesBegan x:{pointX:#.##} y:{pointY:#.##}");
+        CubismLog.Debug($"[Live2D App]touchesBegan x:{pointX:#.##} y:{pointY:#.##}");
     }
 
     /// <summary>
@@ -123,7 +130,7 @@ public class LAppView(LAppDelegate lapp)
         // シングルタップ
         float x = _deviceToScreen.TransformX(_touchManager.GetX()); // 論理座標変換した座標を取得。
         float y = _deviceToScreen.TransformY(_touchManager.GetY()); // 論理座標変換した座標を取得。
-        CubismLog.Debug($"[Live2D]touchesEnded x:{x:#.##} y:{y:#.##}");
+        CubismLog.Debug($"[Live2D App]touchesEnded x:{x:#.##} y:{y:#.##}");
         live2DManager.OnTap(x, y);
     }
 
