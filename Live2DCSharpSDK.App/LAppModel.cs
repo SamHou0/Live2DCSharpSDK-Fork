@@ -12,11 +12,11 @@ public class LAppModel : CubismUserModel
     /// <summary>
     /// モデルセッティング情報
     /// </summary>
-    private readonly ModelSettingObj _modelSetting;
+    public readonly ModelSettingObj _modelSetting;
     /// <summary>
     /// モデルセッティングが置かれたディレクトリ
     /// </summary>
-    private readonly string _modelHomeDir;
+    public readonly string _modelHomeDir;
     /// <summary>
     /// モデルに設定されたまばたき機能用パラメータID
     /// </summary>

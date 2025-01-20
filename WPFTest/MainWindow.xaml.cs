@@ -21,7 +21,7 @@ namespace WPFTest
         public MainWindow()
         {
             InitializeComponent();
-            l2dwpf = new Live2DWPFModel(@"F:\Downloads\七彩虹\七彩虹.moc3");
+            l2dwpf = new Live2DWPFModel(@"D:\Documents\Visual Studio 2022\Projects\igc\IGCVPet\Data\pet\seven\seven_base\ColorfulQ.moc3");
             BorderOpenTK.Child = l2dwpf.GLControl;
             l2dwpf.Start();
         }
@@ -32,7 +32,7 @@ namespace WPFTest
         }
         private void workloop()
         {
-            var ind = l2dwpf.StartMotion(@"F:\Downloads\七彩虹\走路1.motion3.json");
+            var ind = l2dwpf.StartMotion(@"D:\Documents\Visual Studio 2022\Projects\igc\IGCVPet\Data\pet\seven\motions\走路1b.motion3.json");
             Task.Run(() =>
             {
                 while (true)
@@ -49,7 +49,7 @@ namespace WPFTest
         }
         void idelloop()
         {
-            l2dwpf.StartMotion(@"F:\Downloads\七彩虹\idle 复制_COPY.motion3.json", onFinishedMotionHandler: (x, y) =>
+            l2dwpf.StartMotion(@"D:\Documents\Visual Studio 2022\Projects\igc\IGCVPet\Data\pet\seven\motions\idle m2.motion3.json", onFinishedMotionHandler: (x, y) =>
             {
                 ticklab.Content = DateTime.Now.ToString() + " idelloop";
                 idelloop();

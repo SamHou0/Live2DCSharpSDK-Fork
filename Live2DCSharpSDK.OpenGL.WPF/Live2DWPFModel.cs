@@ -57,11 +57,23 @@ namespace Live2DCSharpSDK.WPF
             }
             GLControl = new GLWpfControl();
             GLControl.SizeChanged += GLControl_Resized;
+
+            if (!CubismFramework.IsStarted)
+            {//初始化Cubism
+                var cubismAllocator = new LAppAllocator();
+                var cubismOption = new CubismOption()
+                {
+                    LogFunction = Console.WriteLine,
+                    LoggingLevel = LAppDefine.CubismLoggingLevel
+                };
+                CubismFramework.StartUp(cubismAllocator, cubismOption);
+            }
+
             var settings = new GLWpfControlSettings
             {
                 MajorVersion = 3,
                 MinorVersion = 2,
-                GraphicsProfile = ContextProfile.Compatability,
+                Profile = ContextProfile.Compatability,
                 TransparentBackground = true
             };
             GLControl.Start(settings);
@@ -126,7 +138,7 @@ namespace Live2DCSharpSDK.WPF
             CubismMotion motion;
             if (!motions.TryGetValue(MotionPath, out var value))
             {
-                motion = new CubismMotion(MotionPath, onFinishedMotionHandler);               
+                motion = new CubismMotion(MotionPath, onFinishedMotionHandler);
                 motion.SetEffectIds(LModel._eyeBlinkIds, LModel._lipSyncIds);
                 motions.Add(MotionPath, motion);
             }
