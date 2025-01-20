@@ -64,7 +64,7 @@ namespace Live2DCSharpSDK.WPF
                 TransparentBackground = true
             };
             GLControl.Start(settings);
-            LAPP = new (new OpenTKWPFApi(GLControl), Console.WriteLine)
+            LAPP = new LAppDelegateOpenGL(new OpenTKWPFApi(GLControl), Console.WriteLine)
             {
                 BGColor = new(0, 0, 0, 0)
             };

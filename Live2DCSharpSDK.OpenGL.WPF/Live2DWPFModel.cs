@@ -15,6 +15,7 @@ using static Live2DCSharpSDK.Framework.ModelSettingObj.FileReference;
 using System.Windows.Controls;
 using System.Xml.Linq;
 using OpenTK.Windowing.Common;
+using Live2DCSharpSDK.OpenGL;
 
 namespace Live2DCSharpSDK.WPF
 {
@@ -64,7 +65,7 @@ namespace Live2DCSharpSDK.WPF
                 TransparentBackground = true
             };
             GLControl.Start(settings);
-            LAPP = new(new OpenTKWPFApi(GLControl), Console.WriteLine)
+            LAPP = new LAppDelegateOpenGL(new OpenTKWPFApi(GLControl))
             {
                 BGColor = new(0, 0, 0, 0)
             };
