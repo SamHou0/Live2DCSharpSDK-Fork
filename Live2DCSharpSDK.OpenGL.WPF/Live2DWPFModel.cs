@@ -22,7 +22,7 @@ namespace Live2DCSharpSDK.WPF
     /// <summary>
     /// Live2DWPF模型控件
     /// </summary>
-    public class Live2DWPFModel
+    public class Live2DWPFModel : IDisposable
     {
         /// <summary>
         /// 模型名字
@@ -151,5 +151,11 @@ namespace Live2DCSharpSDK.WPF
             return LModel._motionManager.StartMotionPriority(motion, MotionPriority.PriorityForce);
         }
 
+        public void Dispose()
+        {
+            GLControl?.Dispose();
+            LModel?.Dispose();
+            LAPP?.Dispose();
+        }
     }
 }
