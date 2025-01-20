@@ -7,7 +7,7 @@ namespace Live2DCSharpSDK.Framework.Rendering;
 /// モデル描画を処理するレンダラ
 /// サブクラスに環境依存の描画命令を記述する
 /// </summary>
-public abstract class CubismRenderer : IDisposable
+public abstract class CubismRenderer
 {
     /// <summary>
     /// テクスチャの異方性フィルタリングのパラメータ
@@ -34,8 +34,6 @@ public abstract class CubismRenderer : IDisposable
     /// モデル自体のカラー(RGBA)
     /// </summary>
     public CubismTextureColor ModelColor = new();
-
-    public CubismTextureColor ClearColor = new(0, 0, 0, 0);
 
     /// <summary>
     /// Model-View-Projection 行列
@@ -145,23 +143,6 @@ public abstract class CubismRenderer : IDisposable
     /// モデル描画の実装
     /// </summary>
     protected abstract void DoDrawModel();
-
-    /// <summary>
-    /// 描画オブジェクト（アートメッシュ）を描画する。
-    /// ポリゴンメッシュとテクスチャ番号をセットで渡す。
-    /// </summary>
-    /// <param name="textureNo">描画するテクスチャ番号</param>
-    /// <param name="indexCount">描画オブジェクトのインデックス値</param>
-    /// <param name="vertexCount">ポリゴンメッシュの頂点数</param>
-    /// <param name="indexArray">ポリゴンメッシュ頂点のインデックス配列</param>
-    /// <param name="vertexArray">ポリゴンメッシュの頂点配列</param>
-    /// <param name="uvArray">uv配列</param>
-    /// <param name="opacity">不透明度</param>
-    /// <param name="colorBlendMode">カラーブレンディングのタイプ</param>
-    /// <param name="invertedMask">マスク使用時のマスクの反転使用</param>
-    internal abstract unsafe void DrawMesh(int textureNo, int indexCount, int vertexCount
-                          , ushort* indexArray, float* vertexArray, float* uvArray
-                          , float opacity, CubismBlendMode colorBlendMode, bool invertedMask);
 
     /// <summary>
     /// モデル描画直前のレンダラのステートを保持する

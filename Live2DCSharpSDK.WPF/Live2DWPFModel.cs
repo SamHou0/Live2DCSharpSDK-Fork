@@ -21,7 +21,7 @@ namespace Live2DCSharpSDK.WPF
     /// <summary>
     /// Live2DWPF模型控件
     /// </summary>
-    public class Live2DWPFModel
+    public class Live2DWPFModel : IDisposable
     {
         /// <summary>
         /// 模型名字
@@ -64,7 +64,7 @@ namespace Live2DCSharpSDK.WPF
                 TransparentBackground = true
             };
             GLControl.Start(settings);
-            LAPP = new(new OpenTKWPFApi(GLControl), Console.WriteLine)
+            LAPP = new (new OpenTKWPFApi(GLControl), Console.WriteLine)
             {
                 BGColor = new(0, 0, 0, 0)
             };
@@ -125,7 +125,7 @@ namespace Live2DCSharpSDK.WPF
             CubismMotion motion;
             if (!motions.TryGetValue(MotionPath, out var value))
             {
-                motion = new CubismMotion(MotionPath, onFinishedMotionHandler);               
+                motion = new CubismMotion(MotionPath, onFinishedMotionHandler);
                 motion.SetEffectIds(LModel._eyeBlinkIds, LModel._lipSyncIds);
                 motions.Add(MotionPath, motion);
             }
@@ -138,5 +138,18 @@ namespace Live2DCSharpSDK.WPF
             return LModel._motionManager.StartMotionPriority(motion, MotionPriority.PriorityForce);
         }
 
+        public void Dispose()
+        {
+            if (GLControl.Parent is Panel panel)
+            {
+                panel.Children.Remove(GLControl);
+            }
+            else if (GLControl.Parent is Decorator decorator)
+            {
+                decorator.Child = null;
+            }
+            LModel?.Dispose();
+            LAPP?.Dispose();
+        }
     }
 }

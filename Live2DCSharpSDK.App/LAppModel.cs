@@ -1,10 +1,9 @@
-﻿using Live2DCSharpSDK.Framework;
+﻿using System.Text.Json;
+using Live2DCSharpSDK.Framework;
 using Live2DCSharpSDK.Framework.Effect;
 using Live2DCSharpSDK.Framework.Math;
 using Live2DCSharpSDK.Framework.Model;
 using Live2DCSharpSDK.Framework.Motion;
-using Live2DCSharpSDK.Framework.Rendering.OpenGL;
-using System.Text.Json;
 
 namespace Live2DCSharpSDK.App;
 
@@ -51,6 +50,9 @@ public class LAppModel : CubismUserModel
             return list;
         }
     }
+
+    public List<TextureInfo> Textures = [];
+
     public List<string> Parameters => new(Model.ParameterIds);
 
     /// <summary>
@@ -126,7 +128,7 @@ public class LAppModel : CubismUserModel
 
         _modelHomeDir = dir;
 
-        CubismLog.Debug($"[Live2D]load model setting: {fileName}");
+        CubismLog.Debug($"[Live2D App]load model setting: {fileName}");
 
         using var stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
@@ -146,7 +148,7 @@ public class LAppModel : CubismUserModel
                 throw new Exception("model is null");
             }
 
-            CubismLog.Debug($"[Live2D]create model: {path}");
+            CubismLog.Debug($"[Live2D App]create model: {path}");
 
             LoadModel(File.ReadAllBytes(path), _mocConsistency);
         }
@@ -256,8 +258,11 @@ public class LAppModel : CubismUserModel
 
         Updating = false;
         Initialized = true;
-
-        CreateRenderer(new CubismRenderer_OpenGLES2(_lapp.GL, Model));
+        if (Renderer != null)
+        {
+            DeleteRenderer();
+        }
+        Renderer = lapp.CreateRenderer(Model);
 
         SetupTextures();
     }
@@ -276,6 +281,12 @@ public class LAppModel : CubismUserModel
                 ReleaseMotionGroup(item.Key);
             }
         }
+
+        foreach (var item in Textures)
+        {
+            _lapp.TextureManager.ReleaseTexture(item);
+        }
+        Textures.Clear();
     }
 
     public void LoadBreath()
@@ -336,7 +347,7 @@ public class LAppModel : CubismUserModel
     {
         DeleteRenderer();
 
-        CreateRenderer(new CubismRenderer_OpenGLES2(_lapp.GL, Model));
+        CreateRenderer(_lapp.CreateRenderer(Model));
 
         SetupTextures();
     }
@@ -443,10 +454,9 @@ public class LAppModel : CubismUserModel
         }
 
         matrix.MultiplyByMatrix(ModelMatrix);
-        if (Renderer is CubismRenderer_OpenGLES2 ren)
+        if (Renderer != null)
         {
-            ren.ClearColor = _lapp.BGColor;
-            ren.SetMvpMatrix(matrix);
+            Renderer.SetMvpMatrix(matrix);
         }
 
         DoDraw();
@@ -478,7 +488,7 @@ public class LAppModel : CubismUserModel
         }
         else if (!_motionManager.ReserveMotion(priority))
         {
-            CubismLog.Debug("[Live2D]can't start motion.");
+            CubismLog.Debug("[Live2D App]can't start motion.");
             return null;
         }
 
@@ -526,7 +536,7 @@ public class LAppModel : CubismUserModel
             //_wavFileHandler.Start(path);
         }
 
-        CubismLog.Debug($"[Live2D]start motion: [{group}_{no}]");
+        CubismLog.Debug($"[Live2D App]start motion: [{group}_{no}]");
         return _motionManager.StartMotionPriority(motion, priority);
     }
 
@@ -555,7 +565,7 @@ public class LAppModel : CubismUserModel
     public void SetExpression(string expressionID)
     {
         ACubismMotion motion = _expressions[expressionID];
-        CubismLog.Debug($"[Live2D]expression: [{expressionID}]");
+        CubismLog.Debug($"[Live2D App]expression: [{expressionID}]");
 
         if (motion != null)
         {
@@ -563,7 +573,7 @@ public class LAppModel : CubismUserModel
         }
         else
         {
-            CubismLog.Debug($"[Live2D]expression[{expressionID}] is null ");
+            CubismLog.Debug($"[Live2D App]expression[{expressionID}] is null ");
         }
     }
 
@@ -596,7 +606,7 @@ public class LAppModel : CubismUserModel
     /// <param name="eventValue"></param>
     protected override void MotionEventFired(string eventValue)
     {
-        CubismLog.Debug($"[Live2D]{eventValue} is fired on LAppModel!!");
+        CubismLog.Debug($"[Live2D App]{eventValue} is fired on LAppModel!!");
         Motion?.Invoke(this, eventValue);
     }
 
@@ -640,7 +650,7 @@ public class LAppModel : CubismUserModel
             return;
         }
 
-        (Renderer as CubismRenderer_OpenGLES2)?.DrawModel();
+        Renderer?.DrawModel();
     }
 
     /// <summary>
@@ -654,7 +664,7 @@ public class LAppModel : CubismUserModel
         for (int i = 0; i < list.Count; i++)
         {
             string voice = list[i].Sound;
-
+            //TODO Voice
         }
     }
 
@@ -665,19 +675,14 @@ public class LAppModel : CubismUserModel
     {
         if (_modelSetting.FileReferences?.Textures?.Count > 0)
         {
-            for (int modelTextureNumber = 0; modelTextureNumber < _modelSetting.FileReferences.Textures.Count; modelTextureNumber++)
+            for (int index = 0; index < _modelSetting.FileReferences.Textures.Count; index++)
             {
-                //OpenGLのテクスチャユニットにテクスチャをロードする
-                var texturePath = _modelSetting.FileReferences.Textures[modelTextureNumber];
+                var texturePath = _modelSetting.FileReferences.Textures[index];
                 if (string.IsNullOrWhiteSpace(texturePath))
                     continue;
                 texturePath = Path.GetFullPath(_modelHomeDir + texturePath);
-
-                var texture = _lapp.TextureManager.CreateTextureFromPngFile(texturePath);
-                int glTextueNumber = texture.ID;
-
-                //OpenGL
-                (Renderer as CubismRenderer_OpenGLES2)?.BindTexture(modelTextureNumber, glTextueNumber);
+                var texture = _lapp.TextureManager.CreateTextureFromPngFile(this, index, texturePath);
+                Textures.Add(texture);
             }
         }
     }
