@@ -1,4 +1,5 @@
 ﻿using Live2DCSharpSDK.WPF;
+using Microsoft.Win32;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,54 +18,29 @@ namespace WPFTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        Live2DWPFModel l2dwpf;
+        Live2DWPFModel live2dModel;
+        string path = "";
         public MainWindow()
         {
             InitializeComponent();
-            l2dwpf = new Live2DWPFModel(@"D:\Documents\Visual Studio 2022\Projects\igc\IGCVPet\Data\pet\seven\seven_base\ColorfulQ.moc3");
-            BorderOpenTK.Child = l2dwpf.GLControl;
-            l2dwpf.Start();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            workloop();
-        }
-        private void workloop()
-        {
-            var ind = l2dwpf.StartMotion(@"D:\Documents\Visual Studio 2022\Projects\igc\IGCVPet\Data\pet\seven\motions\走路1b.motion3.json");
-            Task.Run(() =>
+            OpenFileDialog dialog = new();
+            dialog.Filter = "moc3|*.moc3";
+            dialog.ShowDialog();
+            path = dialog.FileName;
+            if (path == "")
             {
-                while (true)
-                {
-                    Console.WriteLine(ind.Finished);
-                    Thread.Sleep(200);
-                }
-            });
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            idelloop();
-        }
-        void idelloop()
-        {
-            l2dwpf.StartMotion(@"D:\Documents\Visual Studio 2022\Projects\igc\IGCVPet\Data\pet\seven\motions\idle m2.motion3.json", onFinishedMotionHandler: (x, y) =>
-            {
-                ticklab.Content = DateTime.Now.ToString() + " idelloop";
-                idelloop();
-            });
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            
+                Close();
+                return;
+            }
+            live2dModel = new Live2DWPFModel(path);
+            BorderOpenTK.Child = live2dModel.GLControl;
+            live2dModel.Start();
         }
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
             var mp = e.GetPosition(BorderOpenTK);
-            l2dwpf.LModel.SetDragging((float)(mp.X / BorderOpenTK.ActualWidth * 2 - 1),
+            live2dModel.LModel.SetDragging((float)(mp.X / BorderOpenTK.ActualWidth * 2 - 1),
                 -(float)(mp.Y / BorderOpenTK.ActualHeight * 2 - 0.5));
         }
 

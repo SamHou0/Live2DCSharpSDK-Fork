@@ -12,4 +12,10 @@
     <ProjectReference Include="..\Live2DCSharpSDK.OpenGL.WPF\Live2DCSharpSDK.OpenGL.WPF.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Live2DCubismCore.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
