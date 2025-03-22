@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Live2DCSharpSDK.OpenGL.WPF\Live2DCSharpSDK.OpenGL.WPF.csproj" />
+    <PackageReference Include="Live2DCSharpSDK.OpenGL.WPF" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
